@@ -17,7 +17,8 @@
                 return object;
             }
 
-            function buildPath (prefix, key) {
+            function buildPath (prefix, key, lastMinus) {
+                lastMinus = lastMinus || false;
                 var path = '/' + prefix;
                 path = path.replace(/\./g, '/');
 
@@ -29,6 +30,16 @@
                     path += '/' + key;
                 }
 
+                if (lastMinus) {
+                    var lastSlash = path.lastIndexOf('/');
+                    if (lastSlash !== -1) {
+                        var number = parseInt(path.substring(lastSlash + 1), 10);
+                        if (isInt(number)) {
+                            path = path.substring(0, lastSlash + 1) + '-';
+                        }
+                    }
+                }
+
                 return path;
             }
 
@@ -36,11 +47,15 @@
                 return Object.prototype.toString.call(obj) === '[object Object]';
             }
 
+            function isInt(n) {
+                return n % 1 === 0;
+            }
+
             patch.prototype = {
                 add: function(prefix, key, value) {
                     this.changes.push({
                         op: 'add',
-                        path: buildPath(prefix, key),
+                        path: buildPath(prefix, key, true),
                         value: value
                     });
                 },
@@ -58,21 +73,8 @@
                         value: value ? value : key
                     });
                 },
-                move: function(from, path) {
-                    this.changes.push({
-                        op: 'move',
-                        from: buildPath(from),
-                        path: buildPath(path)
-                    });
-                },
-                copy: function(from, path) {
-                    this.changes.push({
-                        op: 'copy',
-                        from: buildPath(from),
-                        path: buildPath(path)
-                    });
-                },
                 similar: function(prefix, key, value) {},
+                'undefined': function(prefix, key, value) {},
                 getChanges: function() {
                     return this.changes;
                 },
@@ -85,6 +87,8 @@
                         return 'similar';
                     } else if (original && current) {
                         return 'replace';
+                    } else {
+                        return 'undefined';
                     }
                 },
                 build: function(paths, original, current, parentPath, patchAction) {
@@ -101,7 +105,8 @@
 
                             this.build(_.times(maxLength, function(i) {return i;}), originalData, currentData, currentPath);
                         } else {
-                            this[this.getType(originalData, currentData)](currentPath, null, currentData);
+                            var type = this.getType(originalData, currentData);
+                            this[type](currentPath, null, currentData);
                         }
                     }, this);
                 }
