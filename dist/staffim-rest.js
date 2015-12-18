@@ -166,8 +166,8 @@
 
                     return name === '.' ? _raw : _raw[name];
                 })
-                .define('Scope.$fetchAll', function() {
-                    return this.$search({limit: LIMIT_INFINITY});
+                .define('Scope.$fetchAll', function(params) {
+                    return this.$search({limit: LIMIT_INFINITY, q: params});
                 })
                 .define('Scope.$withNgTableParams', function(tableParams, params) {
                     params = params || {};

@@ -1,0 +1,14 @@
+{
+  "name": "staffim-rest",
+  "main": "./dist/staffim-rest.js",
+  "ignore": [
+    "src",
+    ".gitignore",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "angular-restmod": "~1.1.11",
+    "angular": "latest"
+  }
+}
