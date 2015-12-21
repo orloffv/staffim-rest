@@ -1,3 +1,3 @@
 (function(){
-    angular.module('staffimRest', []);
+    angular.module('staffimRest', ['restmod', 'staffimUtils']);
 })();
