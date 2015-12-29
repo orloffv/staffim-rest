@@ -41,6 +41,13 @@
                     }
 
                     _resource.$metadata = meta && _raw && _.has(_raw, meta) ? _raw[meta] : {};
+                    if (_resource.$isCollection) {
+                        if (!_.has(_resource.$metadata, 'count')) {
+                            if (_.has(_raw, 'items')) {
+                                _resource.$metadata.count = _.size(_raw.items);
+                            }
+                        }
+                    }
 
                     return name === '.' ? _raw : _raw[name];
                 })
