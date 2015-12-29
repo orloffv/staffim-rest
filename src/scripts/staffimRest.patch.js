@@ -70,7 +70,7 @@
                     this.changes.push({
                         op: 'replace',
                         path: buildPath(prefix),
-                        value: value ? value : key
+                        value: !_.isUndefined(value) ? value : key
                     });
                 },
                 similar: function(prefix, key, value) {},
