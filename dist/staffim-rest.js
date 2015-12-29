@@ -83,13 +83,13 @@
                     return this.changes;
                 },
                 getType: function(original, current) {
-                    if (!original && current) {
+                    if (_.isUndefined(original) && !_.isUndefined(original)) {
                         return 'add';
-                    } else if (original && !current) {
+                    } else if (!_.isUndefined(original) && _.isUndefined(original)) {
                         return 'remove';
                     } else if (_.isEqual(original, current)) {
                         return 'similar';
-                    } else if (original && current) {
+                    } else if (!_.isUndefined(original) && !_.isUndefined(original)) {
                         return 'replace';
                     } else {
                         return 'undefined';
