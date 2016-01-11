@@ -8,7 +8,8 @@ module.exports = function(grunt) {
                     'src/scripts/staffimRest.module.js',
                     'src/scripts/staffimRest.patch.js',
                     'src/scripts/staffimRest.restmod.js',
-                    'src/scripts/staffimRest.config.js'
+                    'src/scripts/staffimRest.config.js',
+                    'src/scripts/staffimRest.errorTranslator.js'
                 ],
                 dest: './dist/staffim-rest.js'
             }
