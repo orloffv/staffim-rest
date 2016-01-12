@@ -225,6 +225,25 @@
                             return data;
                         });
                 })
+                .define('Record.$patchModel', function(data) {
+                    var original = this;
+                    var patchedModel = _.clone(this);
+                    var defer = $q.defer();
+                    patchedModel = $.extend(true, {}, patchedModel, data);
+                    patchedModel
+                        .$patch(_.keys(data))
+                        .$asPromise()
+                        .then(function(data) {
+                            angular.copy(patchedModel, original);
+
+                            defer.resolve(data);
+                        })
+                        .catch(function(data) {
+                            defer.reject(data);
+                        });
+
+                    return defer.promise;
+                })
                 .define('Record.$patch', function(paths, patchAction) {
                     var that = this;
                     if (!this.$patchOriginal) {
