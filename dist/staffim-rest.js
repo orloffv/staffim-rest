@@ -83,13 +83,13 @@
                     return this.changes;
                 },
                 getType: function(original, current) {
-                    if (_.isUndefined(original) && !_.isUndefined(original)) {
+                    if (_.isUndefined(original) && !_.isUndefined(current)) {
                         return 'add';
-                    } else if (!_.isUndefined(original) && _.isUndefined(original)) {
+                    } else if (!_.isUndefined(original) && _.isUndefined(current)) {
                         return 'remove';
                     } else if (_.isEqual(original, current)) {
                         return 'similar';
-                    } else if (!_.isUndefined(original) && !_.isUndefined(original)) {
+                    } else if (!_.isUndefined(original) && !_.isUndefined(current)) {
                         return 'replace';
                     } else {
                         return 'undefined';
