@@ -151,6 +151,12 @@
                 .on('after-feed', function() {
                     this.$patchOriginal = this.$wrap(Utils.UPDATE_MASK);
                 })
+                .on('before-fetch', function(request) {
+                    this.$patchRequestParams = request.params;
+                    if (_.has(this.$patchRequestParams, 'token')) {
+                        delete this.$patchRequestParams.token;
+                    }
+                })
                 .define('Model.unpack', function(_resource, _raw) {
                     var name = null,
                         meta = this.getProperty('jsonMeta', 'meta');
@@ -266,6 +272,7 @@
                             request = {
                                 method: this.$type.getProperty('patchMethod', 'PATCH'), // allow user to override patch method
                                 url: url,
+                                params: that.$patchRequestParams,
                                 data: patch.getChanges()
                             };
                         this
