@@ -60,6 +60,11 @@
                 .define('Scope.$fetchAll', function(params) {
                     return this.$search({limit: LIMIT_INFINITY, q: params});
                 })
+                .define('Scope.$fetchLimit', function(params, limit) {
+                    limit = _.isUndefined(limit) ? 10 : limit;
+
+                    return this.$search({limit: limit, q: params});
+                })
                 .define('Scope.$withNgTableParams', function(tableParams, params) {
                     params = params || {};
 
