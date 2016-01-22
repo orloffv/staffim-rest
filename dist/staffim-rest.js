@@ -255,7 +255,7 @@
 
                     return defer.promise;
                 })
-                .define('Record.$patch', function(paths, patchAction) {
+                .define('Record.$patch', function(paths, patchAction, requestParams) {
                     var that = this;
                     if (!this.$patchOriginal) {
                         return this.$save();
@@ -277,7 +277,7 @@
                             request = {
                                 method: this.$type.getProperty('patchMethod', 'PATCH'), // allow user to override patch method
                                 url: url,
-                                params: that.$patchRequestParams,
+                                params: _.extend({}, that.$patchRequestParams, requestParams),
                                 data: patch.getChanges()
                             };
                         this
