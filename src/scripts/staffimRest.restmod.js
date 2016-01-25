@@ -30,10 +30,31 @@
                     this.$patchOriginal = this.$wrap(Utils.UPDATE_MASK);
                 })
                 .on('before-fetch', function(request) {
-                    this.$patchRequestParams = request.params;
-                    if (_.has(this.$patchRequestParams, 'token')) {
-                        delete this.$patchRequestParams.token;
+                    this.$patchRequestParams = angular.copy(request.params);
+                })
+                .on('before-fetch-many', function(request) {
+                    this.$patchRequestParams = angular.copy(request.params);
+                    if (_.has(this.$patchRequestParams, 'limit')) {
+                        delete this.$patchRequestParams.limit;
                     }
+
+                    if (_.has(this.$patchRequestParams, 'offset')) {
+                        delete this.$patchRequestParams.offset;
+                    }
+
+                    if (_.has(this.$patchRequestParams, 'q')) {
+                        delete this.$patchRequestParams.q;
+                    }
+
+                    if (_.has(this.$patchRequestParams, 'sort_by')) {
+                        delete this.$patchRequestParams['sort_by'];
+                    }
+                })
+                .on('after-fetch-many', function() {
+                    var that = this;
+                    _.each(this, function(model) {
+                        model.$patchRequestParams = that.$patchRequestParams;
+                    });
                 })
                 .define('Model.unpack', function(_resource, _raw) {
                     var name = null,
