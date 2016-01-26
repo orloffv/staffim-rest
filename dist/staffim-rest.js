@@ -276,10 +276,26 @@
 
                     return defer.promise;
                 })
+                .define('Record.$withParams', function(params) {
+                    var decorator = {
+                        'before-request': function(req) {
+                            req.params = params;
+                        }
+                    };
+                    var that = this;
+
+                    return {
+                        $save: function() {
+                            return that.$decorate(decorator, function() {
+                                return this.$save()
+                            });
+                        }
+                    };
+                })
                 .define('Record.$patch', function(paths, patchAction, requestParams) {
                     var that = this;
                     if (!this.$patchOriginal) {
-                        return this.$save();
+                        return this.$withParams(requestParams).$save();
                     }
 
                     return this.$action(function() {
