@@ -81,10 +81,15 @@
                 .define('Scope.$fetchAll', function(params) {
                     return this.$search({limit: LIMIT_INFINITY, q: params});
                 })
-                .define('Scope.$fetchLimit', function(params, limit) {
+                .define('Scope.$fetchLimit', function(queryParams, limit, params) {
+                    params = params || {};
                     limit = _.isUndefined(limit) ? 10 : limit;
+                    queryParams = {
+                        limit: limit,
+                        q: queryParams
+                    };
 
-                    return this.$search({limit: limit, q: params});
+                    return this.$search($.extend(true, {}, queryParams, params));
                 })
                 .define('Scope.$withNgTableParams', function(tableParams, params) {
                     params = params || {};
