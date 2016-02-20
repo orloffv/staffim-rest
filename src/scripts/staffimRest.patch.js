@@ -102,8 +102,11 @@
                             this.build(_.keys(_.extend({}, originalData, currentData)), originalData, currentData, currentPath);
                         } else if (_.isArray(originalData) && _.isArray(currentData)) {
                             var maxLength = Math.max(_.size(originalData), _.size(currentData));
-
-                            this.build(_.times(maxLength, function(i) {return i;}), originalData, currentData, currentPath);
+                            if (_.size(originalData) >= _.size(currentData)) {
+                                this.build(_.times(maxLength, function(i) {return maxLength - 1 - i;}), originalData, currentData, currentPath);
+                            } else {
+                                this.build(_.times(maxLength, function(i) {return i;}), originalData, currentData, currentPath);
+                            }
                         } else {
                             var type = this.getType(originalData, currentData);
                             this[type](currentPath, null, currentData);
