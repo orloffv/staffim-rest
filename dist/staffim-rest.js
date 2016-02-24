@@ -204,7 +204,7 @@
                     return name === '.' ? _raw : _raw[name];
                 })
                 .define('Scope.$fetchAll', function(params) {
-                    return this.$search({limit: LIMIT_INFINITY, q: params});
+                    return this.$search($.extend(true, {}, this.$params, {limit: LIMIT_INFINITY, q: params}));
                 })
                 .define('Scope.$fetchLimit', function(queryParams, limit, params) {
                     params = params || {};
