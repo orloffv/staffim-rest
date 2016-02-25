@@ -78,8 +78,14 @@
 
                     return name === '.' ? _raw : _raw[name];
                 })
-                .define('Scope.$fetchAll', function(params) {
-                    return this.$search($.extend(true, {}, this.$params, {limit: LIMIT_INFINITY, q: params}));
+                .define('Scope.$fetchAll', function(queryParams, params) {
+                    params = params || {};
+                    queryParams = {
+                        limit: LIMIT_INFINITY,
+                        q: queryParams
+                    };
+
+                    return this.$search($.extend(true, {}, this.$params, queryParams, params));
                 })
                 .define('Scope.$fetchLimit', function(queryParams, limit, params) {
                     params = params || {};
@@ -89,7 +95,7 @@
                         q: queryParams
                     };
 
-                    return this.$search($.extend(true, {}, queryParams, params));
+                    return this.$search($.extend(true, {}, this.$params, queryParams, params));
                 })
                 .define('Scope.$withNgTableParams', function(tableParams, params) {
                     params = params || {};
