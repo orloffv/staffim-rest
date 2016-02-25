@@ -127,6 +127,7 @@
 (function() {
     angular.module('staffimRest')
         .constant('LIMIT_INFINITY', 0)
+        .factory('nullableFilter',  nullableFilter)
         .factory('SRApi', SRApi)
         .factory('SRPacker', SRPacker);
 
@@ -142,6 +143,12 @@
                 urlPrefix: CONFIG.apiUrl
             }
         });
+    }
+
+    function nullableFilter() {
+        return function(value) {
+            return _.isEmpty(value) ? null : value;
+        }
     }
 
     SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q'];
