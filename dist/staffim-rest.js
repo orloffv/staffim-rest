@@ -280,14 +280,14 @@
                 })
                 .define('Record.$patchModel', function(data) {
                     var original = this;
-                    var patchedModel = _.clone(this);
+                    var patchedModel = _.copyModel(original);
                     var defer = $q.defer();
                     patchedModel = $.extend(true, {}, patchedModel, data);
                     patchedModel
                         .$patch(_.keys(data))
                         .$asPromise()
                         .then(function(data) {
-                            angular.copy(patchedModel, original);
+                            _.copyModel(patchedModel, original);
 
                             defer.resolve(data);
                         })
