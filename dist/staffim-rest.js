@@ -166,6 +166,7 @@
                 })
                 .on('before-fetch-many', function(request) {
                     this.$patchRequestParams = angular.copy(request.params);
+                    this.$lastRequest = request;
                     if (_.has(this.$patchRequestParams, 'limit')) {
                         delete this.$patchRequestParams.limit;
                     }
@@ -250,7 +251,8 @@
                                 (_.startsWith(tableParams.orderBy(), '+') ? 'asc' : 'desc');
 
                             return memo;
-                        }, {});
+                        }, {})
+                        .value();
 
                     var queryParams = {
                         'sort_by': sortBy,
