@@ -95,6 +95,13 @@
 
                     return this.$search($.extend(true, {}, this.$params, queryParams, params));
                 })
+                .define('Scope.getDownloadUrl', function(extension) {
+                    if (this.$lastRequest) {
+                        return this.$lastRequest.url + '.' + extension + '?' + $.param(this.$lastRequest.params);
+                    }
+
+                    return null;
+                })
                 .define('Scope.$fetchLimit', function(queryParams, limit, params) {
                     params = params || {};
                     limit = _.isUndefined(limit) ? 10 : limit;
