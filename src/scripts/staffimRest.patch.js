@@ -7,7 +7,12 @@
             };
 
             function getPath(context, key) {
-                var paths = (key + '').split('.');
+                key = key + '';
+                if (_.has(context, key)) {
+                    return context[key];
+                }
+                
+                var paths = key.split('.');
                 var object = context[paths.shift()];
 
                 _.each(paths, function(key) {
