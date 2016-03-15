@@ -3,8 +3,8 @@
     angular.module('staffimRest')
         .service('SRErrorTranslator', SRErrorTranslator);
 
-    SRErrorTranslator.$inject = ['SRTranslatorMap'];
-    function SRErrorTranslator(translatorMap) {
+    SRErrorTranslator.$inject = ['SRTranslatorMap', 'SULogger'];
+    function SRErrorTranslator(translatorMap, SULogger) {
         var ErrorTranslator = function(modelName) {
             var map = translatorMap(modelName);
             this.translateByField = function(field, error) {
@@ -27,7 +27,17 @@
                     /*jshint camelcase: true */
                 }
 
-                return message ? message : (_.capitalize(field) + ': ' + (_.isObject(error) ? error.message : error));
+                if (message) {
+                    return message;
+                }
+
+                SULogger.info('SRErrorTranslator: not found translate', {
+                    modelName: modelName,
+                    field: field,
+                    error: error
+                });
+
+                return _.capitalize(field) + ': ' + (_.isObject(error) ? error.message : error);
             };
 
             this.translate = function(error) {
@@ -39,7 +49,16 @@
                     }
                 }
 
-                return message ? message : (_.isObject(error) && _.has(error, 'message') ? error.message : error);
+                if (message) {
+                    return message;
+                }
+
+                SULogger.info('SRErrorTranslator: not found translate', {
+                    modelName: modelName,
+                    error: error
+                });
+
+                return _.isObject(error) && _.has(error, 'message') ? error.message : error;
             };
 
             this.parseResponse = function(response) {
