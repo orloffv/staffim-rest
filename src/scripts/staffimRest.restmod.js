@@ -23,11 +23,11 @@
     function nullableFilter() {
         return function(value) {
             return _.isEmpty(value) ? null : value;
-        }
+        };
     }
 
-    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q'];
-    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q) {
+    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SRErrorTranslator', 'toastr'];
+    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SRErrorTranslator, toastr) {
         return restmod.mixin(function() {
             this
                 .on('before-render', function(data) {
@@ -162,7 +162,12 @@
                             return data;
                         });
                 })
-                .define('Record.$patchModel', function(data) {
+                .define('Record.$patchModel', function(data, options) {
+                    options = _.extend({
+                        errorMessage: 'Не удалось сохранить',
+                        successMessage: 'Успешно сохранено'
+                    }, options || {});
+
                     var original = this;
                     var patchedModel = _.copyModel(original);
                     var defer = $q.defer();
@@ -172,11 +177,14 @@
                         .$asPromise()
                         .then(function(data) {
                             _.copyModel(patchedModel, original);
-
+                            toastr.error(options.successMessage);
                             defer.resolve(data);
                         })
-                        .catch(function(data) {
-                            defer.reject(data);
+                        .catch(function(errorResponse) {
+                            var translator = new SRErrorTranslator(errorResponse.modelName);
+                            var errors = translator.parseResponse(errorResponse.$response);
+                            toastr.error(_.size(errors) ? _.toSentence(errors, '<br>', '<br>') : options.errorMessage);
+                            defer.reject(errorResponse);
                         });
 
                     return defer.promise;
@@ -192,7 +200,7 @@
                     return {
                         $save: function() {
                             return that.$decorate(decorator, function() {
-                                return this.$save()
+                                return this.$save();
                             });
                         }
                     };

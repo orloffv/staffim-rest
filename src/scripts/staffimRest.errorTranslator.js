@@ -3,10 +3,10 @@
     angular.module('staffimRest')
         .service('SRErrorTranslator', SRErrorTranslator);
 
-    SRErrorTranslator.$inject = ['SRTranslatorsMap'];
-    function SRErrorTranslator(translatorsMap) {
+    SRErrorTranslator.$inject = ['SRTranslatorMap'];
+    function SRErrorTranslator(translatorMap) {
         var ErrorTranslator = function(modelName) {
-            var map = translatorsMap.getMap(modelName);
+            var map = translatorMap(modelName);
             this.translateByField = function(field, error) {
                 var message;
                 if (_.isString(error)) {
