@@ -26,8 +26,8 @@
         };
     }
 
-    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SRErrorTranslator', 'toastr'];
-    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SRErrorTranslator, toastr) {
+    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SRErrorTranslator', 'toastr', 'SULogger'];
+    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SRErrorTranslator, toastr, SULogger) {
         return restmod.mixin(function() {
             this
                 .on('before-render', function(data) {
@@ -63,6 +63,18 @@
                     _.each(this, function(model) {
                         model.$patchRequestParams = that.$patchRequestParams;
                     });
+                })
+                .on('after-request-error', function(errorResponse) {
+                    if (errorResponse.status !== 404) {
+                        SULogger.info('SRRestmod: error response', {
+                            response: JSON.stringify(errorResponse.data),
+                            status: errorResponse.status,
+                            requestData: JSON.stringify(errorResponse.config.data),
+                            method: errorResponse.config.method,
+                            requestParams: JSON.stringify(errorResponse.config.params),
+                            url: errorResponse.config.url
+                        });
+                    }
                 })
                 .define('Model.unpack', function(_resource, _raw) {
                     var name = null,
@@ -177,7 +189,7 @@
                         .$asPromise()
                         .then(function(data) {
                             _.copyModel(patchedModel, original);
-                            toastr.error(options.successMessage);
+                            toastr.success(options.successMessage);
                             defer.resolve(data);
                         })
                         .catch(function(errorResponse) {
