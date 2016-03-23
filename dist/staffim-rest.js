@@ -304,6 +304,55 @@
                             return data;
                         });
                 })
+                .define('Scope.$withSTParams', function(tableParams, params) {
+                    params = params || {};
+                    if (_.isUndefined(tableParams.isFirstLoad)) {
+                        params = _.extend({}, this.$params, params);
+                        tableParams.isFirstLoad = true;
+                    }
+
+                    var sortBy = _.chain(tableParams.orderBy())
+                        .words(',')
+                        .reduce(function(memo, orderBy) {
+                            memo[_.trim(orderBy, '+-')] = (_.startsWith(orderBy, '+') || _.startsWith(orderBy, '-')) ? (_.startsWith(orderBy, '+') ?
+                                'asc' : 'desc') :
+                                (_.startsWith(tableParams.orderBy(), '+') ? 'asc' : 'desc');
+
+                            return memo;
+                        }, {})
+                        .value();
+
+                    var queryParams = {
+                        'sort_by': sortBy,
+                        limit: tableParams.count(),
+                        offset: tableParams.count() * (tableParams.page() - 1),
+                        q: tableParams.filter()
+                    };
+
+                    return this
+                        .$search($.extend(true, {}, queryParams, params))
+                        .$then(function(data) {
+                            if (tableParams.isFirstLoad === true) {
+                                tableParams.settings({
+                                    getData: function($defer, tableParams) {
+                                        data.$withSTParams(tableParams, params)
+                                            .$then(function(data) {
+                                                tableParams.settings({
+                                                    total: data.$metadata.count
+                                                });
+
+                                                $defer.resolve(data);
+                                            });
+                                    },
+                                    dataset: data,
+                                    total: data.$metadata.count
+                                });
+                                tableParams.isFirstLoad = false;
+                            }
+
+                            return data;
+                        });
+                })
                 .define('Record.$patchModel', function(data, options) {
                     options = _.extend({
                         errorMessage: 'Не удалось сохранить',
