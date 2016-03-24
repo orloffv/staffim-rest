@@ -326,7 +326,7 @@
                         'sort_by': sortBy,
                         limit: tableParams.count(),
                         offset: tableParams.count() * (tableParams.page() - 1),
-                        q: tableParams.filter()
+                        q: tableParams.filterFormatter()
                     };
 
                     return this
