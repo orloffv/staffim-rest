@@ -368,13 +368,17 @@
                         .$asPromise()
                         .then(function(data) {
                             _.copyModel(patchedModel, original);
-                            toastr.success(options.successMessage);
+                            if (options.successMessage) {
+                                toastr.success(options.successMessage);
+                            }
                             defer.resolve(data);
                         })
                         .catch(function(errorResponse) {
                             var translator = new SRErrorTranslator(errorResponse.modelName);
                             var errors = translator.parseResponse(errorResponse.$response);
-                            toastr.error(_.size(errors) ? _.toSentence(errors, '<br>', '<br>') : options.errorMessage);
+                            if (_.size(errors) || options.errorMessage) {
+                                toastr.error(_.size(errors) ? _.toSentence(errors, '<br>', '<br>') : options.errorMessage);
+                            }
                             defer.reject(errorResponse);
                         });
 
