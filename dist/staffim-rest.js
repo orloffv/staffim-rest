@@ -235,7 +235,7 @@
                         q: queryParams
                     };
 
-                    return this.$search($.extend(true, {}, this.$params, queryParams, params));
+                    return this.$search(_.deepExtend({}, this.$params, queryParams, params));
                 })
                 .define('Scope.getDownloadUrl', function(extension) {
                     if (this.$lastRequest) {
@@ -252,7 +252,7 @@
                         q: queryParams
                     };
 
-                    return this.$search($.extend(true, {}, this.$params, queryParams, params));
+                    return this.$search(_.deepExtend({}, this.$params, queryParams, params));
                 })
                 .define('Scope.$withNgTableParams', function(tableParams, params) {
                     params = params || {};
@@ -286,7 +286,7 @@
                     };
 
                     return this
-                        .$search($.extend(true, {}, queryParams, params))
+                        .$search(_.deepExtend({}, queryParams, params))
                         .$then(function(data) {
                             if (_.isUndefined(tableParams.isFirstLoad)) {
                                 tableParams.isFirstLoad = true;
@@ -330,7 +330,7 @@
                     };
 
                     return this
-                        .$search($.extend(true, {}, queryParams, params))
+                        .$search(_.deepExtend({}, queryParams, params))
                         .$then(function(data) {
                             if (tableParams.isFirstLoad === true) {
                                 tableParams.settings({
@@ -362,7 +362,7 @@
                     var original = this;
                     var patchedModel = _.copyModel(original);
                     var defer = $q.defer();
-                    patchedModel = $.extend(true, {}, patchedModel, data);
+                    _.deepExtend(patchedModel, data);
                     patchedModel
                         .$patch(_.keys(data))
                         .$asPromise()
