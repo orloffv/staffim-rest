@@ -164,7 +164,7 @@
                     delete data._embedded;
                 })
                 .on('after-feed', function() {
-                    this.$patchOriginal = this.$wrap(Utils.UPDATE_MASK);
+                    this.$patchOriginal = this.$getData();
                 })
                 .on('before-fetch', function(request) {
                     this.$patchRequestParams = angular.copy(request.params);
@@ -400,6 +400,9 @@
                         }
                     };
                 })
+                .define('Record.$getData', function() {
+                    return this.$wrap(Utils.UPDATE_MASK);
+                })
                 .define('Record.$patch', function(paths, patchAction, requestParams) {
                     var that = this;
                     if (!this.$patchOriginal) {
@@ -409,7 +412,7 @@
                     return this.$action(function() {
                         var patch = new Patch();
                         if (_.size(paths)) {
-                            var currentData = this.$wrap(Utils.UPDATE_MASK);
+                            var currentData = this.$getData();
                             patch.build(paths, that.$patchOriginal, currentData, undefined, patchAction);
                         }
                         if (!_.size(patch.getChanges())) {
