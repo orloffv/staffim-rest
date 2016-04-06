@@ -156,8 +156,8 @@
         };
     }
 
-    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SRErrorTranslator', 'toastr', 'SULogger'];
-    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SRErrorTranslator, toastr, SULogger) {
+    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SRErrorTranslator', 'SUNotify', 'SULogger'];
+    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SRErrorTranslator, SUNotify, SULogger) {
         return restmod.mixin(function() {
             this
                 .on('before-render', function(data) {
@@ -369,7 +369,7 @@
                         .then(function(data) {
                             _.copyModel(patchedModel, original);
                             if (options.successMessage) {
-                                toastr.success(options.successMessage);
+                                SUNotify.success(options.successMessage);
                             }
                             defer.resolve(data);
                         })
@@ -377,7 +377,7 @@
                             var translator = new SRErrorTranslator(errorResponse.modelName);
                             var errors = translator.parseResponse(errorResponse.$response);
                             if (_.size(errors) || options.errorMessage) {
-                                toastr.error(_.size(errors) ? _.toSentence(errors, '<br>', '<br>') : options.errorMessage);
+                                SUNotify.error(_.size(errors) ? _.toSentence(errors, '<br>', '<br>') : options.errorMessage);
                             }
                             defer.reject(errorResponse);
                         });
