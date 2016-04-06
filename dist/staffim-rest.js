@@ -231,6 +231,7 @@
                 .define('Scope.$fetchAll', function(queryParams, params) {
                     params = params || {};
                     queryParams = {
+                        offset: 0,
                         limit: LIMIT_INFINITY,
                         q: queryParams
                     };
