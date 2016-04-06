@@ -78,7 +78,7 @@
                 replace: function(prefix, key, value) {
                     this.changes.push({
                         op: 'replace',
-                        path: buildPath(prefix),
+                        path: buildPath(prefix, key),
                         value: !_.isUndefined(value) ? value : key
                     });
                 },
@@ -106,7 +106,7 @@
                         var originalData = getPath(original, path);
                         var currentData = getPath(current, path);
                         if (patchAction) {
-                            this[patchAction](currentPath, null, currentData);
+                            this[patchAction](parentPath ? parentPath : currentPath, parentPath ? path : null, currentData);
                         } else if (isRealObject(originalData) && isRealObject(currentData)) {
                             this.build(_.keys(_.extend({}, originalData, currentData)), originalData, currentData, currentPath);
                         } else if (_.isArray(originalData) && _.isArray(currentData)) {
@@ -118,7 +118,7 @@
                             }
                         } else {
                             var type = this.getType(originalData, currentData);
-                            this[type](currentPath, null, currentData);
+                            this[type](parentPath ? parentPath : currentPath, parentPath ? path : null, currentData);
                         }
                     }, this);
                 }
