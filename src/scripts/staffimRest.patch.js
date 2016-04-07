@@ -75,6 +75,14 @@
                     this.changes.push({
                         op: 'replace',
                         path: buildPath(prefix, key),
+                        value: value
+                    });
+                    this.test(prefix, key, value);
+                },
+                test: function(prefix, key, value) {
+                    this.changes.push({
+                        op: 'test',
+                        path: buildPath(prefix, key),
                         value: !_.isUndefined(value) ? value : key
                     });
                 },
