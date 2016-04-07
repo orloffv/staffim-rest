@@ -15,7 +15,7 @@
                 if (_.has(context, key)) {
                     return context[key];
                 }
-                
+
                 var paths = key.split('.');
                 var object = context[paths.shift()];
 
@@ -81,7 +81,6 @@
                         path: buildPath(prefix, key),
                         value: value
                     });
-                    this.test(prefix, key, value);
                 },
                 test: function(prefix, key, value) {
                     this.changes.push({
@@ -113,8 +112,10 @@
                         var currentPath = parentPath ? parentPath + '.' + path : path;
                         var originalData = getPath(original, path);
                         var currentData = getPath(current, path);
+                        var pathPath = parentPath ? parentPath : currentPath;
+                        var keyPatch = parentPath ? path : null;
                         if (patchAction) {
-                            this[patchAction](parentPath ? parentPath : currentPath, parentPath ? path : null, currentData);
+                            this[patchAction](pathPath, keyPatch, currentData);
                         } else if (isRealObject(originalData) && isRealObject(currentData)) {
                             this.build(_.keys(_.extend({}, originalData, currentData)), originalData, currentData, currentPath);
                         } else if (_.isArray(originalData) && _.isArray(currentData)) {
@@ -126,7 +127,15 @@
                             }
                         } else {
                             var type = this.getType(originalData, currentData);
-                            this[type](parentPath ? parentPath : currentPath, parentPath ? path : null, currentData);
+                            if (type === 'remove') {
+                                this.test(pathPath, keyPatch, originalData);
+                            }
+                            this[type](pathPath, keyPatch, currentData);
+                            if (type === 'replace') {
+                                this.test(pathPath, keyPatch, currentData);
+                            } else if (type === 'add') {
+                                this.test(pathPath, keyPatch, currentData);
+                            }
                         }
                     }, this);
                 }
