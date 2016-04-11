@@ -542,7 +542,7 @@
                 var that = this;
                 var errors = [];
                 if (response) {
-                    if ((response.status === 422 || response.status === 400) && _.isObject(response.data)) {
+                    if (_.contains([422, 400, 417], response.status) && _.isObject(response.data)) {
                         if (_.isArray(response.data.errors)) {
                             errors = _.chain(response.data.errors)
                                 .flatten()
