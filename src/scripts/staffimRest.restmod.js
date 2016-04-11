@@ -26,8 +26,8 @@
         };
     }
 
-    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SRErrorTranslator', 'SUNotify', 'SULogger'];
-    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SRErrorTranslator, SUNotify, SULogger) {
+    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SUNotify', 'SULogger'];
+    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SUNotify, SULogger) {
         return restmod.mixin(function() {
             this
                 .on('before-render', function(data) {
@@ -245,11 +245,7 @@
                             defer.resolve(data);
                         })
                         .catch(function(errorResponse) {
-                            var translator = new SRErrorTranslator(errorResponse.modelName);
-                            var errors = translator.parseResponse(errorResponse.$response);
-                            if (_.size(errors) || options.errorMessage) {
-                                SUNotify.error(_.size(errors) ? _.toSentence(errors, '<br>', '<br>') : options.errorMessage);
-                            }
+                            SUNotify.errorResponse(errorResponse, options.errorMessage);
                             defer.reject(errorResponse);
                         });
 
