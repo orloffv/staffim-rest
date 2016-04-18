@@ -226,6 +226,7 @@
                 })
                 .define('Record.$patchModel', function(data, options) {
                     options = _.extend({
+                        deepExtend: true,
                         errorMessage: 'Не удалось сохранить',
                         successMessage: 'Успешно сохранено'
                     }, options || {});
@@ -233,7 +234,11 @@
                     var original = this;
                     var patchedModel = _.copyModel(original);
                     var defer = $q.defer();
-                    _.deepExtend(patchedModel, data);
+                    if (options.deepExtend) {
+                        _.deepExtend(patchedModel, data);
+                    } else {
+                        _.extend(patchedModel, data);
+                    }
                     patchedModel
                         .$patch(_.keys(data))
                         .$asPromise()
