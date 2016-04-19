@@ -181,7 +181,7 @@
                     delete data._embedded;
                 })
                 .on('after-feed', function() {
-                    this.$patchOriginal = this.$getData();
+                    this.$setPatchOriginal(this);
                 })
                 .on('before-fetch', function(request) {
                     this.$patchRequestParams = angular.copy(request.params);
@@ -427,6 +427,9 @@
                             });
                         }
                     };
+                })
+                .define('Record.$setPatchOriginal', function(model) {
+                    this.$patchOriginal = model.$getData();
                 })
                 .define('Record.$getData', function() {
                     return this.$wrap(Utils.UPDATE_MASK);
