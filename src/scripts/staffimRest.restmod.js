@@ -26,8 +26,8 @@
         };
     }
 
-    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SUNotify', 'SULogger'];
-    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SUNotify, SULogger) {
+    SRPacker.$inject = ['restmod', 'SRPatch', 'RMUtils', 'LIMIT_INFINITY', '$q', 'SUNotify', 'SULogger', '$httpParamSerializer'];
+    function SRPacker(restmod, Patch, Utils, LIMIT_INFINITY, $q, SUNotify, SULogger, $httpParamSerializer) {
         return restmod.mixin(function() {
             this
                 .on('before-render', function(data) {
@@ -110,7 +110,16 @@
                 })
                 .define('Scope.getDownloadUrl', function(extension) {
                     if (this.$lastRequest) {
-                        return this.$lastRequest.url + '.' + extension + '?' + $.param(this.$lastRequest.params);
+                        return this.$lastRequest.url + '.' + extension + '?' + $httpParamSerializer(this.$lastRequest.params);
+                    }
+
+                    return null;
+                })
+                .define('Scope.getCacheInfo', function() {
+                    if (this.$lastRequest && _.has(this.$lastRequest, 'cache') && _.has(this.$lastRequest.cache, 'info')) {
+                        var url = this.$lastRequest.url + '?' + $httpParamSerializer(this.$lastRequest.params);
+
+                        return this.$lastRequest.cache.info(url);
                     }
 
                     return null;
