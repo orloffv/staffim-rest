@@ -185,6 +185,7 @@
                 })
                 .on('before-fetch', function(request) {
                     this.$patchRequestParams = angular.copy(request.params);
+                    this.$lastRequest = request;
                 })
                 .on('before-fetch-many', function(request) {
                     this.$patchRequestParams = angular.copy(request.params);
@@ -262,11 +263,16 @@
 
                     return null;
                 })
-                .define('Scope.getCacheInfo', function() {
+                .define('Resource.getCacheInfo', function() {
                     if (this.$lastRequest && _.has(this.$lastRequest, 'cache') && _.has(this.$lastRequest.cache, 'info')) {
-                        var url = this.$lastRequest.url + '?' + $httpParamSerializer(this.$lastRequest.params);
+                        return this.$lastRequest.cache.info(this.getLastRequestUrl());
+                    }
 
-                        return this.$lastRequest.cache.info(url);
+                    return null;
+                })
+                .define('Resource.getLastRequestUrl', function() {
+                    if (this.$lastRequest && _.has(this.$lastRequest, 'params')) {
+                        return this.$lastRequest.url + '?' + $httpParamSerializer(this.$lastRequest.params);
                     }
 
                     return null;
