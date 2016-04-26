@@ -401,8 +401,9 @@
                     } else {
                         _.extend(patchedModel, data);
                     }
+                    var keys = options.keys || _.keys(data);
                     patchedModel
-                        .$patch(_.keys(data))
+                        .$patch(keys)
                         .$asPromise()
                         .then(function(data) {
                             _.copyModel(patchedModel, original);
