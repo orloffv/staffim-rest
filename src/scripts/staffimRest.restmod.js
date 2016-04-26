@@ -291,8 +291,18 @@
                 .define('Record.$setPatchOriginal', function(model) {
                     this.$patchOriginal = model.$getData();
                 })
-                .define('Record.$getData', function() {
-                    return this.$wrap(Utils.UPDATE_MASK);
+                .define('Record.$getData', function(fields) {
+                    var data = this.$wrap(Utils.UPDATE_MASK);
+                    if (_.isArray(fields)) {
+                        var fieldsData = {};
+                        _.each(fields, function(field) {
+                            fieldsData[field] = data[field];
+                        });
+
+                        return fieldsData;
+                    }
+
+                    return data;
                 })
                 .define('Record.$patch', function(paths, patchAction, requestParams) {
                     var that = this;
