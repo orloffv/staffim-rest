@@ -243,7 +243,9 @@
                     options = _.extend({
                         deepExtend: true,
                         errorMessage: 'Не удалось сохранить',
-                        successMessage: 'Успешно сохранено'
+                        successMessage: 'Успешно сохранено',
+                        action: undefined,
+                        requestParams: {}
                     }, options || {});
 
                     var original = this;
@@ -256,7 +258,7 @@
                     }
                     var keys = options.keys || _.keys(data);
                     patchedModel
-                        .$patch(keys)
+                        .$patch(keys, options.action, options.requestParams)
                         .$asPromise()
                         .then(function(data) {
                             _.copyModel(patchedModel, original);
