@@ -5,7 +5,7 @@
 'use strict';
 (function() {
     angular.module('staffimRest')
-        .service('SRPatch', function() {
+        .service('SRPatch', ['srDefaults', function(srDefaults) {
             var patch = function() {
                 this.changes = [];
             };
@@ -114,6 +114,9 @@
                         var currentData = getPath(current, path);
                         var pathPath = parentPath ? parentPath : currentPath;
                         var keyPatch = parentPath ? path : null;
+                        if (_.contains(srDefaults.patch.ignoreKeys, keyPatch)) {
+                            return;
+                        }
                         if (patchAction) {
                             this[patchAction](pathPath, keyPatch, currentData);
                         } else if (isRealObject(originalData) && isRealObject(currentData)) {
@@ -142,7 +145,7 @@
             };
 
             return patch;
-        });
+        }]);
 })();
 
 'use strict';
@@ -612,3 +615,13 @@
         return ErrorTranslator;
     }
 })();
+
+'use strict';
+(function() {
+    angular.module('staffimRest')
+        .value('srDefaults', {
+            patch: {
+                ignoreKeys: ['_embedded']
+            }
+        });
+}());
