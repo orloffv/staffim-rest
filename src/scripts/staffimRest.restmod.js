@@ -34,7 +34,11 @@
                     delete data._embedded;
                 })
                 .on('after-feed', function() {
-                    this.$setPatchOriginal(this);
+                    if (this.$patchOriginalCustom !== true) {
+                        this.$setPatchOriginal(this);
+                    }
+
+                    this.$patchOriginalCustom = false;
                 })
                 .on('before-fetch', function(request) {
                     this.$patchRequestParams = angular.copy(request.params);
