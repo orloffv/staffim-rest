@@ -108,13 +108,13 @@
                         var currentPath = parentPath ? parentPath + '.' + path : path;
                         var originalData = getPath(original, path);
                         var currentData = getPath(current, path);
-                        var pathPath = parentPath ? parentPath : currentPath;
+                        var patchPath = parentPath ? parentPath : currentPath;
                         var keyPatch = parentPath ? path : null;
                         if (_.contains(srDefaults.patch.ignoreKeys, keyPatch)) {
                             return;
                         }
                         if (patchAction) {
-                            this[patchAction](pathPath, keyPatch, currentData);
+                            this[patchAction](patchPath, keyPatch, currentData);
                         } else if (isRealObject(originalData) && isRealObject(currentData)) {
                             this.build(_.keys(_.extend({}, originalData, currentData)), originalData, currentData, currentPath);
                         } else if (_.isArray(originalData) && _.isArray(currentData)) {
@@ -127,13 +127,16 @@
                         } else {
                             var type = this.getType(originalData, currentData);
                             if (type === 'remove') {
-                                this.test(pathPath, keyPatch, originalData);
+                                this.test(patchPath, keyPatch, originalData);
                             }
-                            this[type](pathPath, keyPatch, currentData);
+                            if (type === 'add') {
+                                this.test(patchPath, keyPatch, null);
+                            }
+                            this[type](patchPath, keyPatch, currentData);
                             if (type === 'replace') {
-                                this.test(pathPath, keyPatch, currentData);
+                                this.test(patchPath, keyPatch, currentData);
                             } else if (type === 'add') {
-                                this.test(pathPath, keyPatch, currentData);
+                                this.test(patchPath, keyPatch, currentData);
                             }
                         }
                     }, this);
