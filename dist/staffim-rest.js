@@ -114,7 +114,7 @@
                         var currentData = getPath(current, path);
                         var patchPath = parentPath ? parentPath : currentPath;
                         var keyPatch = parentPath ? path : null;
-                        if (_.contains(srDefaults.patch.ignoreKeys, keyPatch)) {
+                        if (_.contains(srDefaults.patch.ignoreKeys, keyPatch) || _.contains(srDefaults.patch.ignoreKeys, path)) {
                             return;
                         }
                         if (patchAction) {
