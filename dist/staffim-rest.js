@@ -257,6 +257,7 @@
                     return name === '.' ? _raw : _raw[name];
                 })
                 .define('Scope.$fetchAll', function(queryParams, params) {
+                    queryParams = queryParams || {};
                     params = params || {};
                     queryParams = {
                         offset: 0,
